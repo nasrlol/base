@@ -1,4 +1,4 @@
-#include "base_include"
+#include "base_include.h"
 
 internal b8
 compare_string(const char *c1, const char *c2)
@@ -124,7 +124,7 @@ parse_proc_files(const char *path, mem_arena *arena)
  *
  * Return: 1 if string contains only numeric characters, 0 otherwise
  */
-local_internal b8
+internal b8
 is_numeric(char *s)
 {
     for (; *s; ++s)

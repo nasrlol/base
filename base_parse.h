@@ -1,9 +1,10 @@
-#ifndef BAsE_PARSE_H
-#define BAsE_PARSE_H
+#ifndef BASE_PARSE_H
+#define BASE_PARSE_H
 
-#include "base/base_arena.h"
-#include <base/base.h>
 #include <fcntl.h>
+
+#include "base.h"
+#include "base_arena.h"
 
 typedef struct
 {
@@ -27,8 +28,7 @@ parse_proc_files(const char *path, mem_arena *arena);
 internal u64
 parse_u64(char* buf, umm len);
 
-
-local_internal b8
+internal b8
 is_numeric(char *s);
 
 #endif

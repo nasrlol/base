@@ -1,0 +1,21 @@
+CompileFlags:
+  CompilationDatabase: .
+
+  Add:
+    - -std=c99
+    - -g
+    - -O0
+    - -I.
+
+  Remove:
+    - -O*
+    - -Ofast
+
+Diagnostics:
+  Suppress:
+    - pp_file_not_found
+    - unused-command-line-argument
+    - unknown-warning-option
+
+Index:
+  Background: Build

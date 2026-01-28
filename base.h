@@ -56,14 +56,21 @@
 
 #define unused(x) (void)(x)
 
+#define PATH_MAX_LEN 128
 #define BUFF_SMALL 128
 #define BUFF_DEFAULT 256
 #define BUFF_LARGE 512
-#define PATH_MAX_LEN 4096
 
 #define DEPRECATED __attribute__((__deprecated__))
 
+#if defined(__arm__) || defined(__aarch64__)
+#define breakpoint __asm__ volatile("brk #0");
+#elif defined(__i386__) || defined(__x86_64__)
+#define breakpoint __asm__ volatile("int3");
+#endif
+
 #define MemCpy(dest, src, len) memcpy(dest, src, len)
+#define MemSet(dest, len) memset(dest, 0, len)
 
 typedef uint64_t u64;
 typedef uint32_t u32;
@@ -85,7 +92,7 @@ typedef u8  b8;
 typedef uintptr_t umm;
 typedef intptr_t  smm;
 
-#define TRUE 1
-#define FALSE 0
+#define TRUE (0 == 0)
+#define FALSE (0 != 0)
 
 #endif

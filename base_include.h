@@ -1,10 +1,10 @@
 #ifndef BASE_INCLUDE_H
 #define BASE_INCLUDE_H
 
-#include "base/base.h"
-#include "base/base_arena.h"
-#include "base/base_parse.h"
-#include "base/base_stack.h"
+#include "base.h"
+#include "base_arena.h"
+#include "base_parse.h"
+#include "base_stack.h"
 
 #ifdef BASE_UNITY
 

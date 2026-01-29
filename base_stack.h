@@ -1,17 +1,25 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include <sys/mman.h>
+#include <unistd.h>
+
 #include "base.h"
+#include "base_mem.h"
 
-typedef struct
+typedef struct mem_stack        mem_stack;
+typedef struct mem_stack_header mem_stack_header;
+
+struct mem_stack
 {
-	/* NOTE(nasr): is this a pointer handle?  */
+    u8 *base_position;
+    umm capacity;
+    umm current_position;
+};
 
-	u8* buf;
-	umm buf_len;
-	umm offset;
-
-
-} mem_stack;
+struct mem_stack_header
+{
+    u8 padding;
+};
 
 #endif

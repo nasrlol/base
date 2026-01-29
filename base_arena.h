@@ -1,20 +1,18 @@
 #ifndef ARENA_H
 #define ARENA_H
 
-#include "base.h"
-
-#include <assert.h>
 #include <stdint.h>
 #include <string.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
+
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-/**
- * Arena Helper macro's
- * */
+#include <sys/mman.h>
+#include <sys/stat.h>
+
+#include "base_mem.h"
+#include "base.h"
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
@@ -22,7 +20,6 @@
 #define ALIGN(pointer, align) align((u64)(pointer), (umm)(align))
 #define PUSH_STRUCT(arena, type) (type *)arena_alloc((arena), sizeof(type))
 #define PUSH_ARRAY(arena, type, len) (type *)arena_alloc((arena), sizeof(type) * (len))
-#define ARENA_ALIGN (2 * sizeof(void *))
 
 typedef struct mem_arena  mem_arena;
 typedef struct temp_arena temp_arena;

@@ -19,6 +19,7 @@
         if (!(expr)) \
         { \
             write(STDERR_FILENO, " [FAILED] in ", 13); \
+            write(STDERR_FILENO, __FILE__, 50); \
             write(STDERR_FILENO, __func__, 50); \
             write(STDERR_FILENO, "\n", 1); \
             _exit(1); \
@@ -26,6 +27,7 @@
         else \
         { \
             write(STDOUT_FILENO, "[PASSED] ", 9); \
+            write(STDERR_FILENO, __FILE__, 50); \
             write(STDOUT_FILENO, __func__, 50); \
             write(STDOUT_FILENO, "\n", 1); \
         } \
@@ -39,16 +41,15 @@
         write(STDERR_FILENO, RESET "\n", 1); \
     }
 
+#define internal static
 #define global_variable static
 #define local_persist static
-#define internal static
 
 #define ERR_OK 0
 #define ERR_IO 1
 #define ERR_PARSE 2
 #define ERR_PERM 3
 #define ERR_INVALID 4
-#define null NULL
 
 #define KiB(n) (((u64)(n)) << 10)
 #define MiB(n) (((u64)(n)) << 20)

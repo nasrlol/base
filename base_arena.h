@@ -14,9 +14,6 @@
 #include "base_mem.h"
 #include "base.h"
 
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
 #define ALIGN(pointer, align) align((u64)(pointer), (umm)(align))
 #define PUSH_STRUCT(arena, type) (type *)arena_alloc((arena), sizeof(type))
 #define PUSH_ARRAY(arena, type, len) (type *)arena_alloc((arena), sizeof(type) * (len))

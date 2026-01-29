@@ -73,7 +73,7 @@ stack_push_align(mem_stack *stack, u64 size, umm alignment)
     umm               padding;
     mem_stack_header *header;
 
-    if (is_pow(alignment))
+    if (!is_pow(alignment))
     {
         /**
          * TODO(nasr): error handling
@@ -120,7 +120,7 @@ stack_pop(mem_stack *stack, void *pointer)
         umm               prev_offset;
 
         start           = (umm)stack->base_position;
-        end             = start + (umm)stack->base_position;
+        end             = start + (umm)stack->capacity;
         current_address = (umm)pointer;
 
         if (!(start <= current_address && current_address < end))
@@ -142,4 +142,16 @@ stack_pop(mem_stack *stack, void *pointer)
         stack->current_position = prev_offset;
     }
     return;
+}
+
+internal void
+stack_destroy(mem_stack *stack)
+{
+    if (!stack)
+    {
+        return;
+    }
+
+    int res = munmap(stack, stack->capacity + sizeof(mem_stack));
+    check(res);
 }

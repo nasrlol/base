@@ -20,6 +20,7 @@ struct mem_stack
 struct mem_stack_header
 {
     u8 padding;
+    u8 previous_position;
 };
 
 #endif

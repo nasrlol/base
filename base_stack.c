@@ -7,7 +7,7 @@ stack_create(u64 capacity)
     mem_stack *stack = (mem_stack *)mmap(
     NULL,
     capacity + sizeof(mem_stack),
-    PROT_READ | PROT_WRITE | PROT_EXEC,
+    PROT_READ | PROT_WRITE,
     MAP_SHARED | MAP_ANONYMOUS,
     -1,
     0);
@@ -142,6 +142,54 @@ stack_pop(mem_stack *stack, void *pointer)
         stack->current_position = prev_offset;
     }
     return;
+}
+
+internal mem_stack *
+stack_resize_align(mem_stack *stack, void *pointer, u64 old_size, u64 new_size, u64 alignment)
+{
+    if (pointer == NULL)
+    {
+        return stack_push_align(stack, new_size, alignment);
+    }
+    else if (new_size == 0)
+    {
+        stack_pop(stack, pointer);
+        return NULL;
+    }
+
+    umm   start, end, current_address;
+    umm   min_size = old_size < new_size ? old_size : new_size;
+    void *new_pointer;
+
+    start           = (umm)stack->base_position;
+    end             = start + (umm)stack->capacity;
+    current_address = (umm)pointer;
+    if (!(start <= current_address && current_address < end))
+    {
+        check(0);
+        return NULL;
+    }
+
+    if (current_address >= start + (umm)stack->current_position)
+    {
+        // Treat as a double free
+        return NULL;
+    }
+
+    if (old_size == new_size)
+    {
+        return pointer;
+    }
+
+    new_pointer = stack_push_align(stack, new_size, alignment);
+    memmove(new_pointer, pointer, min_size);
+    return new_pointer;
+}
+
+internal void
+stack_pop_all(mem_stack *stack)
+{
+    stack->current_position = 0;
 }
 
 internal void

@@ -8,7 +8,7 @@ arena_create(u64 capacity)
     /* kernel decides where to throw the arena */
     NULL,
     capacity + sizeof(mem_arena),
-    PROT_READ | PROT_WRITE | PROT_EXEC,
+    PROT_READ | PROT_WRITE,
     MAP_SHARED | MAP_ANONYMOUS,
     -1,
     0);
@@ -42,7 +42,7 @@ internal void *
 arena_alloc(mem_arena *arena, u64 size)
 {
     check(!arena);
-    u64 aligned = align(arena->current_position, ARENA_ALIGN);
+    u64 aligned = ALIGN(arena->current_position, ARENA_ALIGN);
     u64 new_pos = aligned + size;
 
     if (new_pos > arena->capacity)

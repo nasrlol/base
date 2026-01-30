@@ -1,13 +1,12 @@
 #define BASE_UNITY
 #include "base_include.h"
 
-#include <stdio.h>
-
 #define debug
 
-typedef struct object object;
+#include <stdio.h>
 
-struct object
+#ifdef debug
+typedef struct
 {
     u64 x;
     u64 y;
@@ -36,7 +35,6 @@ void
 arena_test()
 {
     mem_arena *arena = arena_create(KiB(8));
-
     object *obj = arena_alloc(arena, sizeof(object));
 
     printa(arena);
@@ -74,3 +72,5 @@ main()
     stack_test();
     return 0;
 }
+
+#endif

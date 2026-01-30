@@ -1,7 +1,7 @@
 #include "base_parse.h"
 
 internal b8
-compare_string(const char *c1, const char *c2)
+compare_string(char *c1, char *c2)
 {
     if (sizeof(c1) != sizeof(c2))
     {
@@ -32,8 +32,7 @@ parse_u64(char *buf, umm len)
 {
     u64 value = 0;
 
-    for (
-    umm buffer_idx = 0;
+    for (umm buffer_idx = 0;
     buffer_idx < len;
     ++buffer_idx)
     {
@@ -49,14 +48,19 @@ parse_u64(char *buf, umm len)
 }
 
 internal ProcEntry *
-parse_proc_files(const char *path, mem_arena *arena)
+parse_proc_files(char *path, mem_arena *arena)
 {
-    local_persist const char KEY_DELIM      = ':';
-    local_persist const char VALUE_DELIMS[] = {
+    u64   fd, bytes;
+    u64   index = 0;
+    char *buffer;
+
+    char KEY_DELIM      = ':';
+    char VALUE_DELIMS[] = {
     ' ',
     '\t',
     };
-    local_persist const char RECORD_DELIM = '\n';
+
+    char RECORD_DELIM = '\n';
 
     ProcEntry *entry = PUSH_STRUCT(arena, ProcEntry);
     if (!path || !arena)
@@ -65,57 +69,18 @@ parse_proc_files(const char *path, mem_arena *arena)
         return NULL;
     }
 
-    i32   fd;
-    u64   bytes;
-    char *buffer[BUFF_SMALL];
+    bytes = read(fd, &buffer, sizeof(buffer));
 
-    bytes = read(fd, buffer, sizeof(buffer));
+    while (index < bytes)
     {
-        char *start;
-        char *end;
+        char *current_value = buffer;
+        breakpoint
 
-        char buffer[BUFF_DEFAULT];
-
-        /* iteration over the buffer to split it up in lines */
-        for (u64 buffer_position = 0;
-        buffer_position < bytes;
-        ++buffer_position)
-        {
-            /* define line */
-            if (buffer[buffer_position] == RECORD_DELIM)
-            {
-            }
-
-            for (u64 line_position = 0;
-            line_position < bytes;
-            ++line_position)
-            {
-                char *line_bf = &buffer[buffer_position];
-
-                if (line_bf[line_position] == '\t' || line_bf[line_position] == ' ')
-                {
-                    continue;
-                }
-
-                if (line_bf[line_position] == KEY_DELIM)
-                {
-                    start = &line_bf[line_position];
-                    continue;
-                }
-
-                start = &line_bf[line_position];
-                if (line_bf[line_position] == '\n')
-                {
-                    end = &line_bf[line_position];
-                    break;
-                }
-            }
-            // break;
-        }
-
-        close(fd);
-        return entry;
+        ++ buffer;
     }
+
+    close(fd);
+    return entry;
 }
 
 /*
@@ -136,18 +101,3 @@ is_numeric(char *s)
     }
     return 1;
 }
-
-#ifdef DEBUG
-int
-main(void)
-{
-    mem_arena *arena = arena_create(MiB(8));
-
-    const char *path  = "/proc/cpuinfo";
-    const char *delim = ":";
-
-    parse_proc_files(path, arena);
-
-    return 0;
-}
-#endif

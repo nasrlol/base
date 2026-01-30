@@ -60,6 +60,8 @@
 #define BUFF_DEFAULT 256
 #define BUFF_LARGE 512
 
+#define NIL 0
+
 #define DEPRECATED __attribute__((__deprecated__))
 
 #if defined(__arm__) || defined(__aarch64__)

@@ -45,7 +45,7 @@ run: $(TARGET)
 
 $(TARGET): $(SOURCES)
 	$(Q)mkdir -p $(BUILD_DIR)
-	$(Q)$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	$(Q)$(CC) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 clean:
 	$(Q)rm -rf $(BUILD_DIR)

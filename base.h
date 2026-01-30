@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <unistd.h>
-#include <stdio.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -12,11 +11,10 @@
 #define RED "\x1b[31m"
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
-
 #define test(expr) \
     do \
     { \
-        if (!(expr)) \
+        if ((expr) != 0) \
         { \
             write(STDERR_FILENO, " [FAILED] in ", 13); \
             write(STDERR_FILENO, __FILE__, 50); \
@@ -34,7 +32,7 @@
     } while (0)
 
 #define check(expr) \
-    if (!(expr)) \
+    if ((expr) != 0) \
     { \
         write(STDERR_FILENO, RED " [ERROR] in ", 12); \
         write(STDERR_FILENO, __func__, 50); \
@@ -65,13 +63,13 @@
 #define DEPRECATED __attribute__((__deprecated__))
 
 #if defined(__arm__) || defined(__aarch64__)
-#define breakpoint __asm__ volatile("brk #0");
+#define breakpoint() __asm__ volatile("brk #0");
 #elif defined(__i386__) || defined(__x86_64__)
-#define breakpoint __asm__ volatile("int3");
+#define breakpoint() __asm__ volatile("int3");
 #endif
 
-#define MemCpy(dest, src, len) memcpy(dest, src, len)
-#define MemSet(dest, len) memset(dest, 0, len)
+#define MemCpy(dest, src, len) memcpy((dest), (src), (len))
+#define MemSet(dest, len) memset((dest), (0), (len))
 
 typedef uint64_t u64;
 typedef uint32_t u32;

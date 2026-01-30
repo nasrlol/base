@@ -5,6 +5,7 @@ CompileFlags:
     - -g
     - -O0
     - -I.
+    - -Wno-undefined-internal
 
   Remove:
     - -O*

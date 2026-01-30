@@ -5,7 +5,7 @@ internal mem_stack *
 stack_create(u64 capacity)
 {
     mem_stack *stack = (mem_stack *)mmap(
-    NULL,
+    0,
     capacity + sizeof(mem_stack),
     PROT_READ | PROT_WRITE,
     MAP_SHARED | MAP_ANONYMOUS,
@@ -17,68 +17,57 @@ stack_create(u64 capacity)
         return NULL;
     }
 
-    stack->capacity = capacity;
-
-    stack->base_position = (u8 *)stack +
-                           sizeof(mem_stack) +
-                           sizeof(mem_stack_header);
-    stack->current_position = 0;
+    stack->capacity       = capacity;
+    stack->base_position  = (u8 *)stack + sizeof(mem_stack);
+    stack->current_offset = 0;
 
     return stack;
 }
 
 internal umm
-calc_padding_with_header(umm ptr, umm alignment, umm header_size)
+calculate_padding(umm pointer, umm alignment, umm header_size)
 {
-    umm p, a, modulo, padding, needed_space;
+    umm modulo, padding;
 
     if (!is_pow(alignment))
     {
         return 0;
     }
 
-    p            = ptr;
-    a            = alignment;
-    modulo       = p & (a - 1);
-    padding      = 0;
-    needed_space = 0;
+    modulo = pointer & (alignment - 1);
+
+    padding = 0;
 
     if (0 == modulo)
     {
-        padding = a - modulo;
+        padding = alignment - modulo;
     }
 
-    needed_space = (umm)header_size;
-    if (padding < needed_space)
+    if (padding < header_size)
     {
-        needed_space -= padding;
+        header_size -= padding;
 
-        if ((needed_space & (a - 1)) != 0)
+        if ((header_size & (alignment - 1)) != 0)
         {
-            padding += a * (1 + (needed_space / a));
+            padding += alignment * (1 + (header_size / alignment));
         }
         else
         {
-            padding += a * (needed_space / a);
+            padding += alignment * (header_size / alignment);
         }
     }
 
-    return (umm)padding;
+    return padding;
 }
 
 internal mem_stack *
 stack_push_align(mem_stack *stack, u64 size, umm alignment)
 {
-    umm               current_address, next_address;
-    umm               padding;
-    mem_stack_header *header;
+    umm padding = 0;
 
     if (!is_pow(alignment))
     {
-        /**
-         * TODO(nasr): error handling
-         **/
-        return 0;
+        return (0);
     }
 
     if (alignment > 128)
@@ -86,24 +75,24 @@ stack_push_align(mem_stack *stack, u64 size, umm alignment)
         alignment = 128;
     }
 
-    current_address = (umm)stack->base_position + stack->current_position;
-    padding         = calc_padding_with_header(padding, alignment, sizeof(mem_stack_header));
-    if (stack->current_position + padding + size > stack->capacity)
+    umm current_address = (umm)stack->base_position + stack->current_offset;
+    padding             = calculate_padding(current_address, alignment, sizeof(mem_stack_header));
+
+    if (stack->current_offset + padding + size > stack->capacity)
     {
         return 0;
     }
 
-    stack->current_position += padding;
+    stack->current_offset += padding;
 
-    next_address    = current_address + (umm)padding;
-    header          = (mem_stack_header *)(next_address - sizeof(mem_stack_header));
-    header->padding = (u8)padding;
+    umm               next_address = current_address + (umm)padding;
+    mem_stack_header *header       = (mem_stack_header *)(next_address - sizeof(mem_stack_header));
+    header->padding                = padding;
 
-    stack->current_position += size;
+    stack->current_offset += size;
 
     return MemSet((void *)next_address, size);
 }
-
 internal void *
 stack_push(mem_stack *stack, umm size)
 {
@@ -137,11 +126,10 @@ stack_pop(mem_stack *stack, void *pointer)
             return;
         }
 
-        header                  = (mem_stack_header *)(current_address - sizeof(mem_stack_header));
-        prev_offset             = (size_t)(current_address - (umm)header->padding - start);
-        stack->current_position = prev_offset;
+        header                = (mem_stack_header *)(current_address - sizeof(mem_stack_header));
+        prev_offset           = (size_t)(current_address - (umm)header->padding - start);
+        stack->current_offset = prev_offset;
     }
-    return;
 }
 
 internal mem_stack *
@@ -170,7 +158,7 @@ stack_resize_align(mem_stack *stack, void *pointer, u64 old_size, u64 new_size, 
         return NULL;
     }
 
-    if (current_address >= start + (umm)stack->current_position)
+    if (current_address >= start + (umm)stack->current_offset)
     {
         // Treat as a double free
         return NULL;
@@ -189,7 +177,7 @@ stack_resize_align(mem_stack *stack, void *pointer, u64 old_size, u64 new_size, 
 internal void
 stack_pop_all(mem_stack *stack)
 {
-    stack->current_position = 0;
+    stack->current_offset = 0;
 }
 
 internal void
@@ -200,6 +188,5 @@ stack_destroy(mem_stack *stack)
         return;
     }
 
-    int res = munmap(stack, stack->capacity + sizeof(mem_stack));
-    check(res);
+    munmap(stack, stack->capacity + sizeof(mem_stack));
 }

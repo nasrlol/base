@@ -35,7 +35,6 @@ arena_destroy(mem_arena *arena)
     }
 
     int code = munmap(arena, arena->capacity + sizeof(mem_arena));
-    check(0)
 }
 
 internal void *
@@ -91,7 +90,7 @@ arena_resize_align(mem_arena *arena, void *old_memory, u64 new_size, u64 old_siz
 
     if (!is_pow(alignment))
     {
-        align(arena->current_position, alignment);
+        ALIGN(arena->current_position, alignment);
     }
 
     if (old_memory == NULL || old_size == 0)

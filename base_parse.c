@@ -8,15 +8,7 @@
 internal b8
 compare_string(char *c1, char *c2)
 {
-    if (sizeof(c1) != sizeof(c2))
-    {
-        return -1;
-    }
-
-    for (
-    u64 word_idx = 0;
-    word_idx <= sizeof(*c1);
-    ++word_idx)
+    for (u64 word_idx = 0; word_idx <= sizeof(*c1); ++word_idx)
     {
         if (*c1 != *c2)
         {
@@ -37,9 +29,7 @@ parse_u64(char *buf, umm len)
 {
     u64 value = 0;
 
-    for (umm buffer_idx = 0;
-    buffer_idx < len;
-    ++buffer_idx)
+    for (umm buffer_idx = 0; buffer_idx < len; ++buffer_idx)
     {
         char c = buf[buffer_idx];
         if (c < '0' || c > '9')

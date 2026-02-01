@@ -8,37 +8,6 @@
 
 /* assert an expression and output the file and the line */
 
-#define RED "\x1b[31m"
-#define GREEN "\x1b[32m"
-#define RESET "\x1b[0m"
-#define test(expr) \
-    do \
-    { \
-        if ((expr) != 0) \
-        { \
-            write(STDERR_FILENO, " [FAILED] in ", 13); \
-            write(STDERR_FILENO, __FILE__, 50); \
-            write(STDERR_FILENO, __func__, 50); \
-            write(STDERR_FILENO, "\n", 1); \
-            _exit(1); \
-        } \
-        else \
-        { \
-            write(STDOUT_FILENO, "[PASSED] ", 9); \
-            write(STDERR_FILENO, __FILE__, 50); \
-            write(STDOUT_FILENO, __func__, 50); \
-            write(STDOUT_FILENO, "\n", 1); \
-        } \
-    } while (0)
-
-#define check(expr) \
-    if ((expr) != 0) \
-    { \
-        write(STDERR_FILENO, RED " [ERROR] in ", 12); \
-        write(STDERR_FILENO, __func__, 50); \
-        write(STDERR_FILENO, RESET "\n", 1); \
-    }
-
 #define internal static
 #define global_variable static
 #define local_persist static
@@ -65,9 +34,10 @@
 #define DEPRECATED __attribute__((__deprecated__))
 
 #if defined(__arm__) || defined(__aarch64__)
-#define breakpoint() __asm__ volatile("brk #0");
+#define breakpoint __asm__ volatile("brk #0");
+#define temp_breakpoint __asm__ volatile("udf #0");
 #elif defined(__i386__) || defined(__x86_64__)
-#define breakpoint() __asm__ volatile("int3");
+#define breakpoint __asm__ volatile("int3");
 #endif
 
 #define MemCpy(dest, src, len) memcpy((dest), (src), (len))
@@ -83,8 +53,6 @@ typedef int16_t i16;
 typedef int32_t i32;
 typedef int64_t i64;
 
-typedef i8 s8;
-
 typedef float  f32;
 typedef double f64;
 
@@ -97,5 +65,13 @@ typedef intptr_t  smm;
 
 #define TRUE (0 == 0)
 #define FALSE (0 != 0)
+
+typedef struct s8 s8;
+
+struct s8
+{
+    char *value;
+    umm   size;
+};
 
 #endif

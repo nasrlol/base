@@ -5,22 +5,16 @@ CC  := clang
 # Paths
 SRC_DIR   := .
 GEN_DIR   :=
-BUILD_DIR := build
+BUILD_DIR := .
+TARGET    := ./main
 
-TARGET := $(BUILD_DIR)/main
-
-INCLUDES := \
-	-I$(SRC_DIR) \
-	-I$(GEN_DIR)
-
-INCLUDES += $(shell pkg-config libc)
+# Include paths
+INCLUDES := -I$(SRC_DIR)
+# Note: pkg-config libc is unusual - typically you wouldn't need this
+# INCLUDES += $(shell pkg-config --cflags libc)
 
 # Compiler flags (C only)
-CFLAGS := \
-					-g \
-					-o0
-
-
+CFLAGS := -g
 
 # Compiler flags (C++ only)
 CXXFLAGS :=
@@ -29,25 +23,18 @@ CXXFLAGS :=
 LDFLAGS :=
 
 # Sources (unity build)
-SOURCES := \
-	main.c
-
-# Quiet / verbose toggle
-ifndef VERBOSE
-Q := @
-endif
+SOURCES := main.c
 
 # Rules
+.PHONY: all clean run
+
 all: $(TARGET)
 
-run: $(TARGET)
-	$(Q)./$(TARGET)
-
 $(TARGET): $(SOURCES)
-	$(Q)mkdir -p $(BUILD_DIR)
-	$(Q)$(CC) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CC) $(INCLUDES) $(CFLAGS) $(SOURCES) -o $(TARGET) $(LDFLAGS)
 
 clean:
-	$(Q)rm -rf $(BUILD_DIR)
+	rm -f $(TARGET)
 
-.PHONY: all run clean
+run: $(TARGET)
+	$(TARGET)

@@ -1,3 +1,4 @@
+#include "base_test.h"
 #include "base_arena.h"
 
 internal mem_arena *
@@ -34,7 +35,7 @@ arena_destroy(mem_arena *arena)
     }
 
     int code = munmap(arena, arena->capacity + sizeof(mem_arena));
-    check(code);
+    check(0)
 }
 
 internal void *

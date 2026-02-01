@@ -1,4 +1,9 @@
+#include "base.h"
+#include "base_arena.h"
+#include <sys/stat.h>
+#define debug
 #include "base_parse.h"
+#undef debug
 
 internal b8
 compare_string(char *c1, char *c2)
@@ -47,40 +52,66 @@ parse_u64(char *buf, umm len)
     return value;
 }
 
+/*
+
+Get line count
+and for each line
+allocated an entry
+and then for each \n
+make a proc entry
+and then iterate over the buffer
+
+
+*/
 internal ProcEntry *
 parse_proc_files(char *path, mem_arena *arena)
 {
-    u64   fd, bytes;
-    u64   index = 0;
-    char *buffer;
-
-    char KEY_DELIM      = ':';
-    char VALUE_DELIMS[] = {
-    ' ',
-    '\t',
-    };
-
-    char RECORD_DELIM = '\n';
-
-    ProcEntry *entry = PUSH_STRUCT(arena, ProcEntry);
-    if (!path || !arena)
+    i32 line_count = 0;
+    i32 fd         = open(path, O_RDONLY);
+    if (fd < 0)
     {
-        test(0);
         return NULL;
     }
+    struct stat *file_info = PUSH_STRUCT(arena, struct stat);
+    fstat(fd, file_info);
+    char *buffer = PUSH_ARRAY(arena, char, KiB(4));
+    u64   bytes  = read(fd, buffer, KiB(2));
+    close(fd);
 
-    bytes = read(fd, &buffer, sizeof(buffer));
-
-    while (index < bytes)
+    for (u64 index = 0; index < bytes; ++index)
     {
-        char *current_value = buffer;
-        breakpoint
-
-        ++ buffer;
+        if (buffer[index] == '\n')
+        {
+            line_count++;
+        }
     }
 
-    close(fd);
-    return entry;
+    ProcEntry *entries = arena_alloc(arena, sizeof(ProcEntry) * line_count);
+
+    u32 entries_index = 0;
+    u64 delim         = 0;
+
+    for (u64 index = 0; index < bytes; ++index)
+    {
+        if (buffer[index] == ':')
+        {
+            delim = index;
+        }
+        else if (buffer[index] == '\n' && delim > 0)
+        {
+            MemCpy(entries[entries_index].key, buffer, delim);
+            entries[entries_index].key[delim] = '\0';
+
+            u64 start_offset = delim + 1;
+            u64 end_offset   = index - delim - 1;
+            MemCpy(entries[entries_index].value, buffer + start_offset, end_offset);
+            entries[entries_index].value[end_offset] = '\0';
+
+            entries_index++;
+            delim = 0;
+        }
+    }
+    return entries;
 }
 
 /*

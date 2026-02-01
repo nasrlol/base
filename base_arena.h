@@ -15,6 +15,7 @@
 #define ALIGN(pointer, alignment) align((u64)(pointer), (umm)(alignment))
 #define PUSH_STRUCT(arena, type) (type *)arena_alloc((arena), sizeof(type))
 #define PUSH_ARRAY(arena, type, len) (type *)arena_alloc((arena), sizeof(type) * (len))
+#define PUSH_STRING(arena, len) (s8 *)arena_alloc((arena), sizeof(s8)*len))
 
 typedef struct mem_arena  mem_arena;
 typedef struct temp_arena temp_arena;

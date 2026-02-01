@@ -1,21 +1,16 @@
 #ifndef BASE_PARSE_H
 #define BASE_PARSE_H
 
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "base.h"
 #include "base_arena.h"
 
-typedef struct string string;
-
-struct string
-{
-    s8 *value;
-    umm length;
-};
-
 typedef struct
 {
-    char *key;
-    char *value[];
+    char value[256];
+    char key[256];
 } ProcEntry;
 
 typedef struct
@@ -36,5 +31,7 @@ parse_u64(char *buf, umm len);
 
 internal b8
 is_numeric(char *s);
+
+#define COMPARE_STRING(c1, c2) compare_string((char *)c1, (char *)c2)
 
 #endif

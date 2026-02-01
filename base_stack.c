@@ -154,13 +154,11 @@ stack_resize_align(mem_stack *stack, void *pointer, u64 old_size, u64 new_size, 
     current_address = (umm)pointer;
     if (!(start <= current_address && current_address < end))
     {
-        check(0);
         return NULL;
     }
 
     if (current_address >= start + (umm)stack->current_offset)
     {
-        // Treat as a double free
         return NULL;
     }
 

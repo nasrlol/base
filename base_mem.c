@@ -1,3 +1,5 @@
+#include "base_test.h"
+#include <unistd.h>
 #include "base_mem.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -6,11 +8,16 @@ is_pow(umm x)
 {
     return (x & (x - 1)) == 0;
 }
+
 internal inline u64
-align(u64 ptr, umm alignment)
+align(u64 pointer, umm alignment)
 {
-    check((alignment & (alignment - 1)) == 0);
-    return (ptr + alignment - 1) & ~(alignment - 1);
+    if ((alignment & (alignment - 1)) == 0)
+    {
+        return pointer;
+    }
+
+    return (pointer + alignment - 1) & ~(alignment - 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////

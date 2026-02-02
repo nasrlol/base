@@ -40,13 +40,16 @@ arena_destroy(mem_arena *arena)
 internal void *
 arena_alloc(mem_arena *arena, u64 size)
 {
-    check(!arena);
-    u64 aligned = ALIGN(arena->current_position, ARENA_ALIGN);
+    if (!arena)
+    {
+        return NULL;
+    }
+
+    u64 aligned = Align(arena->current_position, ARENA_ALIGN);
     u64 new_pos = aligned + size;
 
     if (new_pos > arena->capacity)
     {
-        check(0);
         return NULL;
     }
 
@@ -90,7 +93,7 @@ arena_resize_align(mem_arena *arena, void *old_memory, u64 new_size, u64 old_siz
 
     if (!is_pow(alignment))
     {
-        ALIGN(arena->current_position, alignment);
+        Align(arena->current_position, alignment);
     }
 
     if (old_memory == NULL || old_size == 0)

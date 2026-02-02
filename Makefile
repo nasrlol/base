@@ -14,7 +14,7 @@ INCLUDES := -I$(SRC_DIR)
 # INCLUDES += $(shell pkg-config --cflags libc)
 
 # Compiler flags (C only)
-CFLAGS := -g
+CFLAGS := -g  --debug -ggdb
 
 # Compiler flags (C++ only)
 CXXFLAGS :=

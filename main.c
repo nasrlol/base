@@ -65,12 +65,29 @@ stack_test()
     stack_destroy(stack);
 }
 
+void
+test_parser()
+{
+    mem_arena *arena = arena_create(MiB(8));
+    proc_file *pf    = parse_proc_files("/proc/cpuinfo", arena);
+
+    proc_entry entry = {0};
+
+    for (i32 index = 0;
+    index < pf->count;
+    ++index)
+    {
+        entry = pf->entries[index];
+
+        printf("key %s", entry.key);
+        printf("value %s", entry.value);
+    }
+}
+
 int
 main()
 {
-    mem_arena *arena = arena_create(KiB(8));
-    parse_proc_files("/proc/cpuinfo", arena);
-
+    test_parser();
     return 0;
 }
 

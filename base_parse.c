@@ -43,68 +43,6 @@ parse_u64(char *buf, umm len)
 }
 
 /*
-
-Get line count
-and for each line
-allocated an entry
-and then for each \n
-make a proc entry
-and then iterate over the buffer
-
-
-*/
-internal ProcEntry *
-parse_proc_files(char *path, mem_arena *arena)
-{
-    i32 line_count = 0;
-    i32 fd         = open(path, O_RDONLY);
-    if (fd < 0)
-    {
-        return NULL;
-    }
-    struct stat *file_info = PUSH_STRUCT(arena, struct stat);
-    fstat(fd, file_info);
-    char *buffer = PUSH_ARRAY(arena, char, KiB(4));
-    u64   bytes  = read(fd, buffer, KiB(2));
-    close(fd);
-
-    for (u64 index = 0; index < bytes; ++index)
-    {
-        if (buffer[index] == '\n')
-        {
-            line_count++;
-        }
-    }
-
-    ProcEntry *entries = arena_alloc(arena, sizeof(ProcEntry) * line_count);
-
-    u32 entries_index = 0;
-    u64 delim         = 0;
-
-    for (u64 index = 0; index < bytes; ++index)
-    {
-        if (buffer[index] == ':')
-        {
-            delim = index;
-        }
-        else if (buffer[index] == '\n' && delim > 0)
-        {
-            MemCpy(entries[entries_index].key, buffer, delim);
-            entries[entries_index].key[delim] = '\0';
-
-            u64 start_offset = delim + 1;
-            u64 end_offset   = index - delim - 1;
-            MemCpy(entries[entries_index].value, buffer + start_offset, end_offset);
-            entries[entries_index].value[end_offset] = '\0';
-
-            entries_index++;
-            delim = 0;
-        }
-    }
-    return entries;
-}
-
-/*
  * is_numeric - Check if a string contains only digits
  * @s: String to check
  *
@@ -121,4 +59,81 @@ is_numeric(char *s)
         }
     }
     return 1;
+}
+
+internal proc_file *
+parse_proc_files(char *path, mem_arena *arena)
+{
+    if (!path || !arena)
+    {
+        return NULL;
+    }
+
+    i32 fd = open(path, O_RDONLY);
+    if (fd < 0)
+    {
+        return NULL;
+    }
+
+    char *buffer = PushArray(arena, char, KiB(4));
+    u64   bytes  = read(fd, buffer, KiB(4));
+    close(fd);
+
+    if (bytes == 0)
+    {
+        return NULL;
+    }
+
+    /* guessing the count to 256 because i dont want to do a double pass of the buffer */
+    proc_file *pf = PushStruct(arena, proc_file);
+    pf->entries   = PushArray(arena, proc_entry, 256);
+
+    u64 line_start  = 0;
+    u64 delim       = -1;
+    u64 entry_index = 0;
+
+    for (u64 index = 0; index < bytes; ++index)
+    {
+        if (buffer[index] == ':' && delim == (u64)-1)
+        {
+            delim = index;
+        }
+        else if (buffer[index] == '\n')
+        {
+            if (delim != (-1))
+            {
+                u64 key_len = delim - line_start;
+                if (key_len >= sizeof(pf->entries[entry_index].key))
+                {
+                    key_len = sizeof(pf->entries[entry_index].key) - 1;
+                }
+
+                u64 val_start = delim + 1;
+                while (val_start < index && (buffer[val_start] == ' ' || buffer[val_start] == '\t'))
+                {
+                    val_start++;
+                }
+
+                u64 val_len = index - val_start;
+                if (val_len >= sizeof(pf->entries[entry_index].value))
+                {
+                    val_len = sizeof(pf->entries[entry_index].value) - 1;
+                }
+
+                MemCpy(pf->entries[entry_index].key, buffer + line_start, key_len - 1);
+                MemCpy(pf->entries[entry_index].value, buffer + val_start, val_len);
+
+                pf->entries[entry_index].key[key_len]   = '\0';
+                pf->entries[entry_index].value[val_len] = '\0';
+
+                ++pf->count;
+                ++entry_index;
+            }
+
+            line_start = index + 1;
+            delim      = (u64)-1;
+        }
+    }
+
+    return (pf);
 }

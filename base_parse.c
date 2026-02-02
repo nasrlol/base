@@ -1,9 +1,9 @@
-#include "base.h"
-#include "base_arena.h"
-#include <sys/stat.h>
 #define debug
 #include "base_parse.h"
 #undef debug
+
+#include <fcntl.h>
+#include <unistd.h>
 
 internal b8
 compare_string(char *c1, char *c2)
@@ -61,6 +61,9 @@ is_numeric(char *s)
     return 1;
 }
 
+/*
+ * TODO(nasr): checkout i think there is a buffer overflow happening somewhere
+ * */
 internal proc_file *
 parse_proc_files(char *path, mem_arena *arena)
 {

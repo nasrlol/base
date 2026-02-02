@@ -1,6 +1,17 @@
 #include "base_test.h"
 #include "base_arena.h"
 
+#include <stdint.h>
+#include <string.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+
+#include "base_mem.h"
+#include "base.h"
+
 internal mem_arena *
 arena_create(u64 capacity)
 {

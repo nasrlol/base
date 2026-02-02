@@ -1,15 +1,6 @@
 #ifndef ARENA_H
 #define ARENA_H
 
-#include <stdint.h>
-#include <string.h>
-#include <dirent.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-
-#include "base_mem.h"
 #include "base.h"
 
 #define Align(pointer, alignment) align((u64)(pointer), (umm)(alignment))
@@ -50,9 +41,18 @@ internal void
 arena_clear(mem_arena *arena);
 
 internal mem_arena *
-arena_resize_align(mem_arena *arena, void *old_memory, u64 new_size, u64 old_size, umm alignment);
+arena_resize_align(
+mem_arena *arena,
+void      *old_memory,
+u64        new_size,
+u64        old_size,
+umm        alignment);
 
 internal mem_arena *
-arena_resize(mem_arena *arena, void *old_memory, u64 new_size, u64 old_size);
+arena_resize(
+mem_arena *arena,
+void      *old_memory,
+u64        new_size,
+u64        old_size);
 
 #endif

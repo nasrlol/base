@@ -1,9 +1,6 @@
 #ifndef BASE_PARSE_H
 #define BASE_PARSE_H
 
-#include <fcntl.h>
-#include <unistd.h>
-
 #include "base.h"
 #include "base_arena.h"
 
@@ -14,7 +11,7 @@ typedef struct proc_file  proc_file;
 
 struct proc_file
 {
-    u64         count;
+    i32         count;
     proc_entry *entries;
 };
 

@@ -1,11 +1,7 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <sys/mman.h>
-#include <unistd.h>
-
 #include "base.h"
-#include "base_mem.h"
 
 typedef struct mem_stack        mem_stack;
 typedef struct mem_stack_header mem_stack_header;

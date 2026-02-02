@@ -1,7 +1,6 @@
 #ifndef BASE_TEST_H
 #define BASE_TEST_H
 
-#include <unistd.h>
 #include "base.h"
 
 void
@@ -10,7 +9,7 @@ write_int(i32 num);
 #define RED "\x1b[31m"
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
-#define BLUE   "\x1b[34m"
+#define BLUE "\x1b[34m"
 
 #define LEN(s) (sizeof(s) - 1)
 
@@ -53,8 +52,8 @@ write_int(i32 num);
         } \
     }
 
-#define checkpoint_output       "<<CHECKPOINT>>\n"
-#define checkpoint_end_output   "^^^^^^^^^^^^^^\n\n\n"
+#define checkpoint_output "<<CHECKPOINT>>\n"
+#define checkpoint_end_output "^^^^^^^^^^^^^^\n\n\n"
 #define checkpoint \
     { \
         write(STDERR_FILENO, BLUE checkpoint_output, LEN(BLUE checkpoint_output)); \

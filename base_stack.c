@@ -1,3 +1,6 @@
+#include <unistd.h>
+#include <sys/mman.h>
+
 #include "base_stack.h"
 #include "base_mem.h"
 

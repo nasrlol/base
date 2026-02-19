@@ -70,7 +70,7 @@ typedef struct s8 s8;
 
 struct s8
 {
-    char *value;
+    char *data;
     umm   size;
 };
 

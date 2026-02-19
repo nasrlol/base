@@ -1,0 +1,25 @@
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  portability-*,
+  misc-definitions-in-headers,
+  misc-unused-parameters,
+  misc-unused-alias-decls,
+  misc-static-assert,
+  readability-redundant-declaration,
+  readability-identifier-naming,
+  readability-simplify-boolean-expr,
+  readability-misleading-indentation,
+  readability-inconsistent-declaration-parameter-name,
+  performance-*,
+  modernize-use-nullptr
+
+WarningsAsErrors: >
+  clang-analyzer-*,
+  bugprone-*,
+  misc-definitions-in-headers
+
+HeaderFilterRegex: '.*'
+AnalyzeTemporaryDtors: false
+FormatStyle: none

@@ -1,6 +1,3 @@
-#include <unistd.h>
-#include "base_test.h"
-
 void
 write_int(i32 num)
 {

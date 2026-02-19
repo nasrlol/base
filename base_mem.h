@@ -1,8 +1,6 @@
 #ifndef BASE_MEM_H
 #define BASE_MEM_H
 
-#include "base.h"
-
 #define ARENA_ALIGN (2 * sizeof(void *))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))

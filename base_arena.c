@@ -1,17 +1,3 @@
-#include "base_test.h"
-#include "base_arena.h"
-
-#include <stdint.h>
-#include <string.h>
-#include <dirent.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-
-#include "base_mem.h"
-#include "base.h"
-
 internal mem_arena *
 arena_create(u64 capacity)
 {
@@ -74,7 +60,6 @@ arena_alloc(mem_arena *arena, u64 size)
     return out;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 internal void
 arena_pop(mem_arena *arena, u64 size)
 {
@@ -94,9 +79,7 @@ arena_clear(mem_arena *arena)
 {
     arena->current_position = 0;
 }
-/////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////
 internal mem_arena *
 arena_resize_align(mem_arena *arena, void *old_memory, u64 new_size, u64 old_size, umm alignment)
 {
@@ -141,9 +124,7 @@ arena_resize(mem_arena *arena, void *old_memory, u64 new_size, u64 old_size)
 {
     return arena_resize_align(arena, old_memory, new_size, old_size, ARENA_ALIGN);
 }
-/////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////
 internal temp_arena
 temp_arena_begin(mem_arena *arena)
 {
@@ -159,4 +140,3 @@ temp_arena_end(temp_arena temp)
 {
     temp.arena->current_position = temp.start_position;
 }
-////////////////////////////////////////////////////////////////////////////

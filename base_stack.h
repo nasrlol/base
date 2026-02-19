@@ -1,8 +1,6 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "base.h"
-
 typedef struct mem_stack        mem_stack;
 typedef struct mem_stack_header mem_stack_header;
 

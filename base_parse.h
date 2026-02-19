@@ -1,9 +1,6 @@
 #ifndef BASE_PARSE_H
 #define BASE_PARSE_H
 
-#include "base.h"
-#include "base_arena.h"
-
 #define COMPARE_STRING(c1, c2) compare_string((char *)c1, (char *)c2)
 
 typedef struct proc_entry proc_entry;

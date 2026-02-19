@@ -1,8 +1,3 @@
-#include "base_test.h"
-#include <unistd.h>
-#include "base_mem.h"
-
-/////////////////////////////////////////////////////////////////////////////
 internal inline b8
 is_pow(umm x)
 {
@@ -20,4 +15,3 @@ align(u64 pointer, umm alignment)
     return (pointer + alignment - 1) & ~(alignment - 1);
 }
 
-/////////////////////////////////////////////////////////////////////////////

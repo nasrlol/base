@@ -1,8 +1,6 @@
 #ifndef ARENA_H
 #define ARENA_H
 
-#include "base.h"
-
 #define Align(pointer, alignment) align((u64)(pointer), (umm)(alignment))
 #define PushStruct(arena, type) (type *)arena_alloc((arena), sizeof(type))
 #define PushArray(arena, type, len) (type *)arena_alloc((arena), sizeof(type) * (len))

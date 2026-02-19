@@ -1,8 +1,6 @@
 #ifndef BASE_TEST_H
 #define BASE_TEST_H
 
-#include "base.h"
-
 void
 write_int(i32 num);
 
@@ -24,7 +22,6 @@ write_int(i32 num);
         write(STDOUT_FILENO, "\n", 1); \
     } while (0)
 
-/* test: fail only */
 #define test(expr) \
     { \
         if ((expr) != 0) \
